@@ -30,3 +30,21 @@ Route::get('/test_database', function () {
 
     return 'Новый сотрудник сохранен!';
 });
+
+Route::get('/', function () {
+    return view('home', [
+        'name' => 'Danila Gordienko',
+        'age' => 20,
+        'position' => 'Product Manager',
+        'address' => 'г. Краснодар, улица Секретная, дом Еще Секретнее xD',
+    ]);
+});
+
+Route::get('/contacts', function () {
+    return view('contacts', [
+        'address' => 'г. Официальный, улица Серьезная, дом Душный',
+        'post_code' => '999000',
+        'email' => 'info@example.com',
+        'phone' => '+1 (001) 010-01-10',
+    ]);
+});
