@@ -2,11 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 use App\Http\Controllers\FormProcessor;
+
+Route::get('/', function () {
+    return view('home', [
+        'name' => 'Danila Gordienko',
+        'age' => 20,
+        'position' => 'Product Manager',
+        'address' => 'г. Краснодар, улица Секретная, дом Еще Секретнее xD',
+    ]);
+});
 
 Route::get('/userform', [FormProcessor::class, 'index']);
 
@@ -29,15 +34,6 @@ Route::get('/test_database', function () {
     $employee->save();
 
     return 'Новый сотрудник сохранен!';
-});
-
-Route::get('/', function () {
-    return view('home', [
-        'name' => 'Danila Gordienko',
-        'age' => 20,
-        'position' => 'Product Manager',
-        'address' => 'г. Краснодар, улица Секретная, дом Еще Секретнее xD',
-    ]);
 });
 
 Route::get('/contacts', function () {
