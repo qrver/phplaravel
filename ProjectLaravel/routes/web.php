@@ -57,3 +57,25 @@ use App\Http\Controllers\BookController;
 
 Route::get('/books/index', [BookController::class, 'index'])->name('index');
 Route::post('/books/store', [BookController::class, 'store'])->name('store');
+
+
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\PdfGeneratorController;
+
+// Все пользователи
+Route::get('/user', [UserController::class, 'index']);
+
+// Один по ID
+Route::get('/user/{id}', [UserController::class, 'get']);
+
+// Новый пользователь
+Route::post('/store-user', [UserController::class, 'store']);
+
+// Генерация PDF резюме
+Route::get('/resume/{id}', [PdfGeneratorController::class, 'index']);
+
+
+// Маршрут на форму
+Route::get('/create-user', function () {
+    return view('create_user');
+});
