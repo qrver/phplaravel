@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\FormProcessor;
 
+use App\Models\Employee;
+
+use App\Http\Controllers\EmployeeController;
+
 Route::get('/', function () {
     return view('home', [
         'name' => 'Danila Gordienko',
@@ -16,8 +20,6 @@ Route::get('/', function () {
 Route::get('/userform', [FormProcessor::class, 'index']);
 
 Route::post('/store_form', [FormProcessor::class, 'store']);
-
-use App\Models\Employee;
 
 Route::get('/test_database', function () {
 
@@ -44,3 +46,7 @@ Route::get('/contacts', function () {
         'phone' => '+1 (001) 010-01-10',
     ]);
 });
+
+Route::get('get-employee-data', [EmployeeController::class, 'index']);
+Route::post('store-form', [EmployeeController::class, 'store']);
+Route::put('/user/{id}', [EmployeeController::class, 'update']);
