@@ -50,3 +50,10 @@ Route::get('/contacts', function () {
 Route::get('get-employee-data', [EmployeeController::class, 'index']);
 Route::post('store-form', [EmployeeController::class, 'store']);
 Route::put('/user/{id}', [EmployeeController::class, 'update']);
+
+use App\Http\Controllers\BookController;
+
+// Я поменял роуты для удобства, потому что слишком много index и store у нас :)
+
+Route::get('/books/index', [BookController::class, 'index'])->name('index');
+Route::post('/books/store', [BookController::class, 'store'])->name('store');
