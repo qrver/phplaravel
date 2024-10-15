@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Facade;
+
 return [
 
     /*
@@ -7,9 +9,7 @@ return [
     | Application Name
     |--------------------------------------------------------------------------
     |
-    | This value is the name of your application, which will be used when the
-    | framework needs to place the application's name in a notification or
-    | other UI elements where an application name needs to be displayed.
+    | Имя приложения.
     |
     */
 
@@ -20,9 +20,7 @@ return [
     | Application Environment
     |--------------------------------------------------------------------------
     |
-    | This value determines the "environment" your application is currently
-    | running in. This may determine how you prefer to configure various
-    | services the application utilizes. Set this in your ".env" file.
+    | Среда приложения.
     |
     */
 
@@ -33,9 +31,7 @@ return [
     | Application Debug Mode
     |--------------------------------------------------------------------------
     |
-    | When your application is in debug mode, detailed error messages with
-    | stack traces will be shown on every error that occurs within your
-    | application. If disabled, a simple generic error page is shown.
+    | Включает или отключает режим отладки.
     |
     */
 
@@ -46,81 +42,115 @@ return [
     | Application URL
     |--------------------------------------------------------------------------
     |
-    | This URL is used by the console to properly generate URLs when using
-    | the Artisan command line tool. You should set this to the root of
-    | the application so that it's available within Artisan commands.
+    | URL приложения.
     |
     */
 
     'url' => env('APP_URL', 'http://localhost'),
 
-    /*
-    |--------------------------------------------------------------------------
-    | Application Timezone
-    |--------------------------------------------------------------------------
-    |
-    | Here you may specify the default timezone for your application, which
-    | will be used by the PHP date and date-time functions. The timezone
-    | is set to "UTC" by default as it is suitable for most use cases.
-    |
-    */
-
-    'timezone' => env('APP_TIMEZONE', 'UTC'),
+    'asset_url' => env('ASSET_URL', null),
 
     /*
     |--------------------------------------------------------------------------
-    | Application Locale Configuration
+    | Timezone
     |--------------------------------------------------------------------------
     |
-    | The application locale determines the default locale that will be used
-    | by Laravel's translation / localization methods. This option can be
-    | set to any locale for which you plan to have translation strings.
+    | Временная зона приложения.
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'timezone' => 'UTC',
 
-    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+    /*
+    |--------------------------------------------------------------------------
+    | Locale Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Основной язык приложения.
+    |
+    */
 
-    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+    'locale' => 'en',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Fallback Locale
+    |--------------------------------------------------------------------------
+    |
+    | Язык по умолчанию.
+    |
+    */
+
+    'fallback_locale' => 'en',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Faker Locale
+    |--------------------------------------------------------------------------
+    |
+    | Локаль Faker для генерации тестовых данных.
+    |
+    */
+
+    'faker_locale' => 'en_US',
 
     /*
     |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
     |
-    | This key is utilized by Laravel's encryption services and should be set
-    | to a random, 32 character string to ensure that all encrypted values
-    | are secure. You should do this prior to deploying the application.
+    | Ключ для шифрования.
     |
     */
-
-    'cipher' => 'AES-256-CBC',
 
     'key' => env('APP_KEY'),
 
-    'previous_keys' => [
-        ...array_filter(
-            explode(',', env('APP_PREVIOUS_KEYS', ''))
-        ),
-    ],
+    'cipher' => 'AES-256-CBC',
 
     /*
     |--------------------------------------------------------------------------
-    | Maintenance Mode Driver
+    | Autoloaded Service Providers
     |--------------------------------------------------------------------------
     |
-    | These configuration options determine the driver used to determine and
-    | manage Laravel's "maintenance mode" status. The "cache" driver will
-    | allow maintenance mode to be controlled across multiple machines.
-    |
-    | Supported drivers: "file", "cache"
+    | Список сервис-провайдеров, которые автоматически загружаются.
     |
     */
 
-    'maintenance' => [
-        'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
-        'store' => env('APP_MAINTENANCE_STORE', 'database'),
+    'providers' => [
+
+        Illuminate\Auth\AuthServiceProvider::class,
+        Illuminate\Broadcasting\BroadcastServiceProvider::class,
+        Illuminate\Bus\BusServiceProvider::class,
+        Illuminate\Cache\CacheServiceProvider::class,
+        Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+        Illuminate\Cookie\CookieServiceProvider::class,
+        Illuminate\Database\DatabaseServiceProvider::class,
+        Illuminate\Encryption\EncryptionServiceProvider::class,
+        Illuminate\Filesystem\FilesystemServiceProvider::class,
+        Illuminate\Foundation\Providers\FoundationServiceProvider::class,
+        Illuminate\Hashing\HashServiceProvider::class,
+        Illuminate\Mail\MailServiceProvider::class,
+        Illuminate\Notifications\NotificationServiceProvider::class,
+        Illuminate\Pagination\PaginationServiceProvider::class,
+        Illuminate\Pipeline\PipelineServiceProvider::class,
+        Illuminate\Queue\QueueServiceProvider::class,
+        Illuminate\Redis\RedisServiceProvider::class,
+        Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
+        Illuminate\Session\SessionServiceProvider::class,
+        Illuminate\Translation\TranslationServiceProvider::class,
+        Illuminate\Validation\ValidationServiceProvider::class,
+        Illuminate\View\ViewServiceProvider::class,
+
+        Barryvdh\DomPDF\ServiceProvider::class, // Добавлено для DOMPDF
+
+        App\Providers\AppServiceProvider::class,
+
     ],
 
+    'aliases' => Facade::defaultAliases()->merge([
+        'PDF' => Barryvdh\DomPDF\Facade\Pdf::class, // Добавлено для DOMPDF
+    ])->toArray(),
+
 ];
+
+// благодарите CHAT GPT. Я 2 часа пытался понять, почему у меня не работают aliases и providers. Он сказал переписать конфиг app.php. Если вы объясните мне нормально, почему я не смог их подключить по инструкции, то я буду рад)
