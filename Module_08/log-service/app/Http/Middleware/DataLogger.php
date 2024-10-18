@@ -3,7 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use app\Models\Log;
+use Illuminate\Support\Facades\Log as Logger;
+use App\Models\Log;
 
 class DataLogger
 {
@@ -12,7 +13,7 @@ class DataLogger
     // Обработка входящего запроса
     public function handle($request, Closure $next)
     {
-        Log::info('DataLogger middleware handle method called.');
+        Logger::info('DataLogger middleware handle method called.');
 
         // Засекаем время начала запроса
         $this->startTime = microtime(true);
@@ -24,8 +25,7 @@ class DataLogger
     // Обработка после отправки ответа пользователю.
     public function terminate($request, $response)
     {
-
-        Log::info('DataLogger middleware terminate method called.');
+        Logger::info('DataLogger middleware terminate method called.');
 
         if (env('API_DATALOGGER', true)) {
             $endTime = microtime(true);
@@ -43,6 +43,7 @@ class DataLogger
             if (env('API_DATALOGGER_USE_DB', true)) {
                 // Сохраняем в базу данных
                 Log::create($data);
+                Logger::info('DataLogger middleware: Log saved to database successfully.');
             } else {
                 // Сохраняем в файл
                 $logString = implode(' | ', $data) . PHP_EOL;
@@ -50,6 +51,7 @@ class DataLogger
                 $logPath = storage_path('logs' . DIRECTORY_SEPARATOR . $filename);
 
                 file_put_contents($logPath, $logString, FILE_APPEND);
+                Logger::info('DataLogger middleware: Log saved to file successfully.');
             }
         }
     }
