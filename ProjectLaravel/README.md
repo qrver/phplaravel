@@ -1,66 +1,118 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ProjectLaravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Приложение на Laravel 11 для учёта сотрудников, ведения каталога книг, управления
+пользователями и генерации PDF-резюме. Построено на стандартной MVC-архитектуре
+Laravel с использованием Eloquent ORM, Blade и Bootstrap 4.
 
-## About Laravel
+## Возможности
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Сотрудники** — форма с полями имя, фамилия, должность, адрес, email, рабочие
+данные и JSON с гео-координатами. При отправке JSON парсится, поля извлекаются и
+сохраняются в отдельные колонки БД. Пишется отладочный лог. Поддерживается
+обновление записи через `PUT /user/{id}` с ответом в JSON.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Книги** — форма с валидацией: название уникально среди всех книг, автор не
+длиннее 100 символов, жанр выбирается из выпадающего списка. При ошибке
+валидации сообщения возвращаются в форму.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Пользователи** — создание через HTML-форму, получение списка всех пользователей
+(JSON), получение одного по ID (JSON или 404). Пароль из модели удалён — это
+упрощённая модель для демонстрации CRUD, без аутентификации.
 
-## Learning Laravel
+**PDF-резюме** — по ID пользователя генерируется PDF через `barryvdh/laravel-dompdf`.
+Шаблон написан на Blade, для корректного отображения кириллицы задан шрифт DejaVu Sans.
+Документ отдаётся как поток.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Стек
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+PHP 8.2, Laravel 11, SQLite, Blade, Bootstrap 4 (CDN), barryvdh/laravel-dompdf,
+Vite (для сборки фронтенда).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Маршруты
 
-## Laravel Sponsors
+```mermaid
+flowchart TD
+    subgraph "HTML-страницы"
+        A[GET /] --> B[home.blade.php]
+        C[GET /contacts] --> D[contacts.blade.php]
+        E[GET /userform] --> F[userform.blade.php]
+        F -->|POST /store_form| G[hello.blade.php]
+        H[GET /get-employee-data] --> I[employee-form.blade.php]
+        I -->|POST /store-form| J[employee-result.blade.php]
+        K[GET /books/index] --> L[book-form.blade.php]
+        M[GET /create-user] --> N[create_user.blade.php]
+    end
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+    subgraph "JSON API"
+        L -->|POST /books/store| O["{message: 'Book was added in DB'}"]
+        N -->|POST /store-user| P["User JSON (201)"]
+        Q[GET /user] --> R["[User, User, ...]"]
+        S[GET /user/{id}] --> T["User | 404"]
+        I -->|PUT /user/{id}| U["{message, employee}"]
+    end
 
-### Premium Partners
+    subgraph "PDF"
+        V[GET /resume/{id}] --> W[resume.pdf]
+    end
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## База данных
 
-## Contributing
+По умолчанию SQLite. Схема управляется миграциями в `database/migrations`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Таблица | Поля |
+| --- | --- |
+| `users` | `name`, `surname`, `email` (уникальный), `timestamps` |
+| `employees` | `first_name`, `last_name`, `email` (уникальный), `position`, `address`, `work_data`, `street`, `city`, `latitude` (decimal), `longitude` (decimal), `timestamps` |
+| `books` | `title`, `author`, `genre`, `timestamps` |
 
-## Code of Conduct
+Миграции демонстрируют как создание таблиц с нуля, так и инкрементальное
+изменение схемы: таблица `employees` создаётся в одной миграции, а JSON-поля
+добавляются в следующей.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Переменные окружения
 
-## Security Vulnerabilities
+`.env` исключён из Git. Пример — в `.env.example`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Переменная | Назначение | По умолчанию |
+| --- | --- | --- |
+| `APP_NAME` | название | `Laravel` |
+| `APP_ENV` | окружение | `local` |
+| `APP_KEY` | ключ шифрования | — |
+| `DB_CONNECTION` | тип БД | `sqlite` |
+| `DB_DATABASE` | путь к файлу SQLite | `database/database.sqlite` |
 
-## License
+## Запуск
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+cp .env.example .env
+composer install
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
+```
+
+## Тесты
+
+```bash
+php artisan test
+```
+
+## Структура
+
+```bash
+app/Http/Controllers/EmployeeController.php # CRUD сотрудников + логирование
+app/Http/Controllers/BookController.php # каталог книг с валидацией
+app/Http/Controllers/UserController.php # CRUD пользователей (JSON API)
+app/Http/Controllers/FormProcessor.php # обработка простой формы
+app/Http/Controllers/PdfGeneratorController.php # генерация PDF-резюме
+app/Models/Employee.php # модель Employee (10 fillable-полей)
+app/Models/Book.php # модель Book (3 fillable-поля)
+app/Models/User.php # модель User (3 fillable-поля, без auth)
+routes/web.php # 11 маршрутов
+resources/views/layouts/default.blade.php # общий layout
+resources/views/includes # header, footer, head (Bootstrap 4)
+resources/views # страницы и формы
+database/migrations # 7 миграций
+database/seeders # DatabaseSeeder (создаёт тестового пользователя)
+```

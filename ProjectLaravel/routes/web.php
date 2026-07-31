@@ -10,10 +10,10 @@ use App\Http\Controllers\EmployeeController;
 
 Route::get('/', function () {
     return view('home', [
-        'name' => 'Danila Gordienko',
-        'age' => 20,
+        'name' => 'Александр Петров',
+        'age' => 27,
         'position' => 'Product Manager',
-        'address' => 'г. Краснодар, улица Секретная, дом Еще Секретнее xD',
+        'address' => 'г. Санкт-Петербург, Невский проспект, д. 1',
     ]);
 });
 
@@ -79,3 +79,7 @@ Route::get('/resume/{id}', [PdfGeneratorController::class, 'index']);
 Route::get('/create-user', function () {
     return view('create_user');
 });
+
+use App\Http\Controllers\LogController;
+
+Route::get('/logs', [LogController::class, 'index']);
